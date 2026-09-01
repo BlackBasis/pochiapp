@@ -1,6 +1,11 @@
 // ============ CONFIG ============
-// Respuesta del candado de entrada
-const LOCK_ANSWER = "siwi";
+const LOCK_ANSWER_HASH = "2ec07897c36a3cb331bc04f8b9776b27c6f3d65f57f2d1f68d684e0f5f407a25";
+
+async function hashText(text) {
+  const data = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return [...new Uint8Array(hashBuffer)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // Fecha de inicio (formato: "AAAA-MM-DD")
 const START_DATE = "2022-01-22";
@@ -34,10 +39,11 @@ if (safeGet('pochiapp_unlocked') === 'true') {
   showApp();
 }
 
-lockForm.addEventListener('submit', (e) => {
+lockForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const value = lockInput.value.trim().toLowerCase();
-  if (value === LOCK_ANSWER) {
+  const valueHash = await hashText(value);
+  if (valueHash === LOCK_ANSWER_HASH) {
     safeSet('pochiapp_unlocked', 'true');
     showApp();
   } else {
