@@ -64,7 +64,7 @@ document.querySelectorAll('.photo-cluster .mural-item').forEach(item => {
   item.addEventListener('click', () => {
     const photoEl = item.querySelector('.polaroid-photo');
     const captionEl = item.querySelector('.polaroid-caption');
-    const img = photoEl.querySelector('img');
+    const img = photoEl.tagName === 'IMG' ? photoEl : photoEl.querySelector('img');
     if (img) {
       lightboxPhoto.innerHTML = img.outerHTML;
     } else {
