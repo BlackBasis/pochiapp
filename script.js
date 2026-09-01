@@ -766,17 +766,33 @@ function scoreForDistance(distanceMonths) {
 let flashbackRounds = [];
 let flashbackRoundIndex = 0;
 let flashbackTotalScore = 0;
+let flashbackAnswered = false;
+let flashbackGuessIndex = null;
+
+function saveFlashbackProgress() {
+  safeSet('pochiapp_session_flashback', JSON.stringify({
+    rounds: flashbackRounds, index: flashbackRoundIndex, score: flashbackTotalScore,
+    answered: flashbackAnswered, guessIndex: flashbackGuessIndex
+  }));
+}
 
 function startFlashback() {
   const saved = safeGet('pochiapp_session_flashback');
   if (saved) {
-    flashbackRounds = JSON.parse(saved);
+    const p = JSON.parse(saved);
+    flashbackRounds = p.rounds;
+    flashbackRoundIndex = p.index;
+    flashbackTotalScore = p.score;
+    flashbackAnswered = p.answered;
+    flashbackGuessIndex = p.guessIndex;
   } else {
     flashbackRounds = shuffle(FLASHBACK_PHOTOS).slice(0, 2);
-    safeSet('pochiapp_session_flashback', JSON.stringify(flashbackRounds));
+    flashbackRoundIndex = 0;
+    flashbackTotalScore = 0;
+    flashbackAnswered = false;
+    flashbackGuessIndex = null;
+    saveFlashbackProgress();
   }
-  flashbackRoundIndex = 0;
-  flashbackTotalScore = 0;
   renderFlashbackRound();
 }
 
@@ -825,6 +841,8 @@ function renderFlashbackRound() {
   document.getElementById('flashback-confirm').addEventListener('click', () => {
     answerFlashback(Number(slider.value), photo);
   });
+
+  if (flashbackAnswered) applyFlashbackAnswerVisual(photo);
 }
 
 function renderFlashbackYearTicks() {
@@ -844,9 +862,23 @@ function answerFlashback(guessIndex, photo) {
   const distance = Math.abs(guessIndex - correctIndex);
   const earned = scoreForDistance(distance);
   flashbackTotalScore += earned;
+  flashbackAnswered = true;
+  flashbackGuessIndex = guessIndex;
+  saveFlashbackProgress();
+  applyFlashbackAnswerVisual(photo);
+}
 
-  document.getElementById('flashback-slider').disabled = true;
-  document.getElementById('flashback-confirm').remove();
+function applyFlashbackAnswerVisual(photo) {
+  const correctIndex = monthYearToIndex(photo.year, photo.month);
+  const distance = Math.abs(flashbackGuessIndex - correctIndex);
+  const earned = scoreForDistance(distance);
+
+  const slider = document.getElementById('flashback-slider');
+  slider.value = flashbackGuessIndex;
+  slider.disabled = true;
+  document.getElementById('flashback-guess-label').textContent = indexToLabel(flashbackGuessIndex);
+  const confirmBtn = document.getElementById('flashback-confirm');
+  if (confirmBtn) confirmBtn.remove();
 
   const feedback = document.getElementById('flashback-feedback');
   feedback.innerHTML = `
@@ -858,6 +890,9 @@ function answerFlashback(guessIndex, photo) {
 
   document.getElementById('flashback-next').addEventListener('click', () => {
     flashbackRoundIndex++;
+    flashbackAnswered = false;
+    flashbackGuessIndex = null;
+    saveFlashbackProgress();
     renderFlashbackRound();
   });
 }
