@@ -26,6 +26,12 @@ function safeSet(key, value) {
 function safeRemove(key) {
   try { localStorage.removeItem(key); } catch (e) { /* almacenamiento no disponible */ }
 }
+function sessionGet(key) {
+  try { return sessionStorage.getItem(key); } catch (e) { return null; }
+}
+function sessionSet(key, value) {
+  try { sessionStorage.setItem(key, value); } catch (e) { /* almacenamiento no disponible */ }
+}
 
 // ============ CANDADO DE ENTRADA ============
 const lockScreen = document.getElementById('lock-screen');
@@ -35,7 +41,7 @@ const lockInput = document.getElementById('lock-answer');
 const lockError = document.getElementById('lock-error');
 
 // Si ya se abrió antes en este navegador, saltamos el candado
-if (safeGet('pochiapp_unlocked') === 'true') {
+if (sessionGet('pochiapp_unlocked') === 'true') {
   showApp();
 }
 
@@ -44,7 +50,7 @@ lockForm.addEventListener('submit', async (e) => {
   const value = lockInput.value.trim().toLowerCase();
   const valueHash = await hashText(value);
   if (valueHash === LOCK_ANSWER_HASH) {
-    safeSet('pochiapp_unlocked', 'true');
+    sessionSet('pochiapp_unlocked', 'true');
     showApp();
   } else {
     lockError.hidden = false;
@@ -126,7 +132,8 @@ if (btnReset) {
 }
 
 function resetApp() {
-  ['pochiapp_unlocked', 'pochiapp_points', 'pochiapp_redeemed', 'pochiapp_cooldown_trivia', 'pochiapp_cooldown_memory', 'pochiapp_cooldown_flashback', 'pochiapp_cooldown_quotes', 'pochiapp_cooldown_food', 'pochiapp_session_trivia', 'pochiapp_session_memory', 'pochiapp_session_flashback', 'pochiapp_session_quotes', 'pochiapp_session_food'].forEach(key => {
+  try { sessionStorage.removeItem('pochiapp_unlocked'); } catch (e) {}
+  ['pochiapp_points', 'pochiapp_redeemed', 'pochiapp_cooldown_trivia', 'pochiapp_cooldown_memory', 'pochiapp_cooldown_flashback', 'pochiapp_cooldown_quotes', 'pochiapp_cooldown_food', 'pochiapp_session_trivia', 'pochiapp_session_memory', 'pochiapp_session_flashback', 'pochiapp_session_quotes', 'pochiapp_session_food'].forEach(key => {
     try { localStorage.removeItem(key); } catch (e) { /* almacenamiento no disponible */ }
   });
   location.reload();
