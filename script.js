@@ -404,20 +404,38 @@ let currentTriviaQuestions = [];
 let triviaIndex = 0;
 let triviaCorrectCount = 0;
 let triviaPoints = 0;
+let triviaAnswered = false;
+let triviaSelected = null;
 const POINTS_PER_CORRECT = 4;
 const POINTS_PENALTY_WRONG = 2;
+
+function saveTriviaProgress() {
+  safeSet('pochiapp_session_trivia', JSON.stringify({
+    questions: currentTriviaQuestions, index: triviaIndex,
+    correctCount: triviaCorrectCount, points: triviaPoints,
+    answered: triviaAnswered, selected: triviaSelected
+  }));
+}
 
 function startTrivia() {
   const saved = safeGet('pochiapp_session_trivia');
   if (saved) {
-    currentTriviaQuestions = JSON.parse(saved);
+    const p = JSON.parse(saved);
+    currentTriviaQuestions = p.questions;
+    triviaIndex = p.index;
+    triviaCorrectCount = p.correctCount;
+    triviaPoints = p.points;
+    triviaAnswered = p.answered;
+    triviaSelected = p.selected;
   } else {
     currentTriviaQuestions = shuffle(TRIVIA_QUESTIONS_POOL).slice(0, 3);
-    safeSet('pochiapp_session_trivia', JSON.stringify(currentTriviaQuestions));
+    triviaIndex = 0;
+    triviaCorrectCount = 0;
+    triviaPoints = 0;
+    triviaAnswered = false;
+    triviaSelected = null;
+    saveTriviaProgress();
   }
-  triviaIndex = 0;
-  triviaCorrectCount = 0;
-  triviaPoints = 0;
   renderTriviaQuestion();
 }
 
@@ -453,23 +471,32 @@ function renderTriviaQuestion() {
     optBtn.addEventListener('click', () => answerTrivia(i));
     optionsWrap.appendChild(optBtn);
   });
+
+  if (triviaAnswered) applyTriviaAnswerVisual();
 }
 
 function answerTrivia(selectedIndex) {
   const item = currentTriviaQuestions[triviaIndex];
-  const optionButtons = document.querySelectorAll('#trivia-options .trivia-option');
-  optionButtons.forEach((b, i) => {
-    b.disabled = true;
-    if (i === item.correct) b.classList.add('correct');
-    else if (i === selectedIndex) b.classList.add('incorrect');
-  });
-
   if (selectedIndex === item.correct) {
     triviaCorrectCount++;
     triviaPoints += POINTS_PER_CORRECT;
   } else {
     triviaPoints -= POINTS_PENALTY_WRONG;
   }
+  triviaAnswered = true;
+  triviaSelected = selectedIndex;
+  saveTriviaProgress();
+  applyTriviaAnswerVisual();
+}
+
+function applyTriviaAnswerVisual() {
+  const item = currentTriviaQuestions[triviaIndex];
+  const optionButtons = document.querySelectorAll('#trivia-options .trivia-option');
+  optionButtons.forEach((b, i) => {
+    b.disabled = true;
+    if (i === item.correct) b.classList.add('correct');
+    else if (i === triviaSelected) b.classList.add('incorrect');
+  });
 
   const wrap = document.getElementById('trivia-wrap');
   const nextBtn = document.createElement('button');
@@ -477,6 +504,9 @@ function answerTrivia(selectedIndex) {
   nextBtn.textContent = (triviaIndex + 1 < currentTriviaQuestions.length) ? 'Siguiente ↪' : 'Ver resultado';
   nextBtn.addEventListener('click', () => {
     triviaIndex++;
+    triviaAnswered = false;
+    triviaSelected = null;
+    saveTriviaProgress();
     renderTriviaQuestion();
   });
   wrap.querySelector('.trivia-card').appendChild(nextBtn);
