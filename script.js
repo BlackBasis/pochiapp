@@ -582,21 +582,29 @@ function shuffle(arr) {
   return a;
 }
 
+function saveMemoryProgress() {
+  safeSet('pochiapp_session_memory', JSON.stringify({ state: memoryState, moves: memoryMoves, hearts: memoryHeartUnits }));
+}
+
 function startMemory() {
   const saved = safeGet('pochiapp_session_memory');
   if (saved) {
-    memoryState = JSON.parse(saved).map(t => ({ ...t, matched: false }));
+    const p = JSON.parse(saved);
+    memoryState = p.state;
+    memoryMoves = p.moves;
+    memoryHeartUnits = p.hearts;
+    memoryMatchedCount = memoryState.filter(t => t.matched).length;
   } else {
     const chosen = shuffle(MEMORY_PHOTOS).slice(0, 8);
     const pairs = shuffle([...chosen, ...chosen]);
     memoryState = pairs.map((photo, i) => ({ cardId: i, photoId: photo.id, label: photo.label, src: photo.src, matched: false }));
-    safeSet('pochiapp_session_memory', JSON.stringify(memoryState));
+    memoryMoves = 0;
+    memoryHeartUnits = 10;
+    memoryMatchedCount = 0;
+    saveMemoryProgress();
   }
   memoryFlipped = [];
-  memoryMoves = 0;
-  memoryMatchedCount = 0;
   memoryLock = false;
-  memoryHeartUnits = 10;
   document.getElementById('memory-result').hidden = true;
   renderHearts();
   renderMemoryGrid();
@@ -660,6 +668,7 @@ function flipMemoryTile(id) {
 
   if (memoryFlipped.length === 2) {
     memoryMoves++;
+    saveMemoryProgress();
     memoryLock = true;
     memorySetLock(true);
 
@@ -677,10 +686,12 @@ function flipMemoryTile(id) {
       memoryLock = false;
       memorySetLock(false);
       memoryHeartUnits = Math.min(10, memoryHeartUnits + 1);
+      saveMemoryProgress();
       renderHearts();
       if (memoryMatchedCount === memoryState.length) finishMemory();
     } else {
       memoryHeartUnits = Math.max(0, memoryHeartUnits - 1);
+      saveMemoryProgress();
       renderHearts();
       setTimeout(() => {
         memoryTileEl(firstId).classList.remove('is-up');
