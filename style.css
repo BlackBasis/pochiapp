@@ -1170,7 +1170,11 @@ button { font-family: var(--font-body); cursor: pointer; }
   transition: filter .5s ease;
 }
 .food-photo img { width: 100%; height: 100%; object-fit: cover; }
-
+.food-photo-clear {
+  filter: none;
+  transform: none;
+}
+.food-photo-clear img { width: 100%; height: 100%; object-fit: cover; }
 .food-form {
   display: flex;
   gap: 10px;

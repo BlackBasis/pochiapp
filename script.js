@@ -1051,7 +1051,8 @@ function finishFood(success) {
     <div class="food-summary">
       <p>${success ? "That's it baby!" : 'Noooo, perdiste 😭'}</p>
       <p class="big">Era: ${foodItem.accepted[0]}</p>
-      <p>+${earned} PochiCoins</p>
+      <p>+🪙 ${earned} PochiCoins</p>
+      <div class="food-photo-wrap"><div class="food-photo food-photo-clear">${foodPhotoHTML()}</div></div>
     </div>`;
 
   addPoints(earned);
