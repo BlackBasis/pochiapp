@@ -901,18 +901,36 @@ let currentQuotes = [];
 let quotesIndex = 0;
 let quotesCorrectCount = 0;
 let quotesPoints = 0;
+let quotesAnswered = false;
+let quotesSelected = null;
+
+function saveQuotesProgress() {
+  safeSet('pochiapp_session_quotes', JSON.stringify({
+    questions: currentQuotes, index: quotesIndex,
+    correctCount: quotesCorrectCount, points: quotesPoints,
+    answered: quotesAnswered, selected: quotesSelected
+  }));
+}
 
 function startQuotes() {
   const saved = safeGet('pochiapp_session_quotes');
   if (saved) {
-    currentQuotes = JSON.parse(saved);
+    const p = JSON.parse(saved);
+    currentQuotes = p.questions;
+    quotesIndex = p.index;
+    quotesCorrectCount = p.correctCount;
+    quotesPoints = p.points;
+    quotesAnswered = p.answered;
+    quotesSelected = p.selected;
   } else {
     currentQuotes = shuffle(QUOTES_POOL).slice(0, QUOTES_PER_ROUND);
-    safeSet('pochiapp_session_quotes', JSON.stringify(currentQuotes));
+    quotesIndex = 0;
+    quotesCorrectCount = 0;
+    quotesPoints = 0;
+    quotesAnswered = false;
+    quotesSelected = null;
+    saveQuotesProgress();
   }
-  quotesIndex = 0;
-  quotesCorrectCount = 0;
-  quotesPoints = 0;
   renderQuoteRound();
 }
 
@@ -957,23 +975,32 @@ function renderQuoteRound() {
   document.querySelectorAll('#quotes-people .quotes-person').forEach(btn => {
     btn.addEventListener('click', () => answerQuote(btn.dataset.who));
   });
+
+  if (quotesAnswered) applyQuoteAnswerVisual();
 }
 
 function answerQuote(selected) {
   const item = currentQuotes[quotesIndex];
-  const buttons = document.querySelectorAll('#quotes-people .quotes-person');
-  buttons.forEach(b => {
-    b.disabled = true;
-    if (b.dataset.who === item.saidBy) b.classList.add('correct');
-    else if (b.dataset.who === selected) b.classList.add('incorrect');
-  });
-
   if (selected === item.saidBy) {
     quotesCorrectCount++;
     quotesPoints += QUOTES_POINTS_PER_CORRECT;
   } else {
     quotesPoints -= QUOTES_PENALTY_WRONG;
   }
+  quotesAnswered = true;
+  quotesSelected = selected;
+  saveQuotesProgress();
+  applyQuoteAnswerVisual();
+}
+
+function applyQuoteAnswerVisual() {
+  const item = currentQuotes[quotesIndex];
+  const buttons = document.querySelectorAll('#quotes-people .quotes-person');
+  buttons.forEach(b => {
+    b.disabled = true;
+    if (b.dataset.who === item.saidBy) b.classList.add('correct');
+    else if (b.dataset.who === quotesSelected) b.classList.add('incorrect');
+  });
 
   const card = document.querySelector('.quotes-card');
   const nextBtn = document.createElement('button');
@@ -981,6 +1008,9 @@ function answerQuote(selected) {
   nextBtn.textContent = (quotesIndex + 1 < currentQuotes.length) ? 'Siguiente ↪' : 'Ver resultado';
   nextBtn.addEventListener('click', () => {
     quotesIndex++;
+    quotesAnswered = false;
+    quotesSelected = null;
+    saveQuotesProgress();
     renderQuoteRound();
   });
   card.appendChild(nextBtn);
