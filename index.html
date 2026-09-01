@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La PochiApp</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ======================= PANTALLA DE ENTRADA (CANDADO) ======================= -->
+<div id="lock-screen" class="lock-screen">
+  <div class="lock-diary">
+    <div class="washi washi-top"></div>
+    <div class="sticker sticker-star" aria-hidden="true">✨</div>
+
+    <h1 class="lock-title">💗 La PochiApp 💗</h1>
+    <p class="lock-sub">Una app para la mejor pochi :)</p>
+
+    <div class="lock-padlock" id="lock-padlock">🔒</div>
+
+    <form id="lock-form" class="lock-form">
+      <label for="lock-answer" class="lock-question">¿Cómo se llama nuestro primer hijo? 🧸</label>
+      <input type="text" id="lock-answer" class="lock-input" autocomplete="off" placeholder="Escribe aquí tu respuesta...">
+      <button type="submit" class="btn-primary">Abrir el cuaderno</button>
+      <p id="lock-error" class="lock-error" hidden>Noooo, esa no es... Piénsala un poco mejor. 🤔</p>
+    </form>
+  </div>
+</div>
+
+<!-- ======================= APP PRINCIPAL ======================= -->
+<div id="app" class="app" hidden>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-emoji">📔</span>
+      <span class="brand-name">La PochiApp</span>
+    </div>
+    <div class="topbar-right">
+      <div class="points-badge" id="points-badge">
+        <span class="points-icon">🪙</span>
+        <span id="points-count">0</span>
+        <span class="points-label">PochiCoins</span>
+      </div>
+      <button id="btn-reset" class="btn-reset" aria-label="Reiniciar la app" title="Reiniciar la app">↺</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-section="inicio">🏠 Inicio</button>
+    <button class="tab-btn" data-section="citas">💌 Citas</button>
+    <button class="tab-btn" data-section="juegos">🎲 Juegos</button>
+    <button class="tab-btn" data-section="calendario">📸 Recuerdos</button>
+    <button class="tab-btn" data-section="premios">🎁 Premios</button>
+  </nav>
+
+  <main class="content">
+
+    <!-- INICIO -->
+    <section id="inicio" class="panel active">
+
+      <div class="hero">
+        <h1 class="hero-title">Un cuaderno de recuerdos sobre y<br>para la mejor novia del mundo.</h1>
+        <p class="hero-sub">Fotos, jueguitos, planes... ¿qué más puedes pedir?<br>Explora las pestañas de arriba y disfruta. 😀</p>
+      </div>
+
+      <div class="counter-block">
+        <div class="counter-grid">
+          <div class="counter-unit"><span class="counter-number" id="c-years">0</span><span class="counter-label">años</span></div>
+          <div class="counter-unit"><span class="counter-number" id="c-months">0</span><span class="counter-label">meses</span></div>
+          <div class="counter-unit"><span class="counter-number" id="c-days">0</span><span class="counter-label">días</span></div>
+          <div class="counter-unit"><span class="counter-number" id="c-hours">0</span><span class="counter-label">horas</span></div>
+          <div class="counter-unit"><span class="counter-number" id="c-minutes">0</span><span class="counter-label">min</span></div>
+          <div class="counter-unit"><span class="counter-number" id="c-seconds">0</span><span class="counter-label">seg</span></div>
+        </div>
+      </div>
+
+      <div class="photo-cluster" id="photo-cluster">
+        <div class="polaroid mural-item size-lg tilt-1"><img class="polaroid-photo" src="assets/inicio/i1.jpg" alt="i1"><p class="polaroid-caption">together forever 💖</p></div>
+        <div class="polaroid mural-item size-sm tilt-2"><img class="polaroid-photo" src="assets/inicio/i2.jpg" alt="i2"><p class="polaroid-caption">who's a weenie? 🌭</p></div>
+        <div class="polaroid mural-item size-sm tilt-3"><img class="polaroid-photo" src="assets/inicio/i3.jpg" alt="i3"><p class="polaroid-caption">beso de leona 🦁</p></div>
+        <div class="polaroid mural-item size-lg tilt-4"><img class="polaroid-photo" src="assets/inicio/i4.jpg" alt="i4"><p class="polaroid-caption">fotoadictos 📸</p></div>
+        <div class="polaroid mural-item size-sm tilt-5"><img class="polaroid-photo" src="assets/inicio/i5.jpg" alt="i5"><p class="polaroid-caption">london eyes 🎡</p></div>
+        <div class="polaroid mural-item size-sm tilt-6"><img class="polaroid-photo" src="assets/inicio/i6.jpg" alt="i6"><p class="polaroid-caption">dab dab dab 🥵</p></div>
+        <div class="polaroid mural-item size-sm tilt-2"><img class="polaroid-photo" src="assets/inicio/i7.jpg" alt="i7"><p class="polaroid-caption">good girl 😘</p></div>
+        <div class="polaroid mural-item size-sm tilt-6"><img class="polaroid-photo" src="assets/inicio/i8.jpg" alt="i8"><p class="polaroid-caption">kiss under a bridge 🌉</p></div>
+        <div class="polaroid mural-item size-lg tilt-5"><img class="polaroid-photo" src="assets/inicio/i9.jpg" alt="i9"><p class="polaroid-caption">guapos y felices 🙃</p></div>
+      </div>
+    </section>
+
+    <!-- LIGHTBOX (ampliar foto del mural) -->
+    <div id="lightbox" class="lightbox-overlay" hidden>
+      <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">✕</button>
+      <div class="lightbox-box">
+        <div id="lightbox-photo" class="lightbox-photo"></div>
+        <p id="lightbox-caption" class="lightbox-caption"></p>
+      </div>
+    </div>
+
+    <!-- CITAS -->
+    <section id="citas" class="panel">
+      <h2 class="section-title">Ideazas de citazas 🤪</h2>
+      <p class="section-sub">Filtra por categoría o dale al botón para generar un plan al azar. 🌍</p>
+
+      <div class="citas-controls">
+        <div class="chip-row" id="chip-row">
+          <button class="chip active" data-cat="todas">Todas</button>
+          <button class="chip" data-cat="casa">🌃 Home &amp; Chill</button>
+          <button class="chip" data-cat="gastro">🍽️ Gastro</button>
+          <button class="chip" data-cat="cultura">🎨 Cultura</button>
+          <button class="chip" data-cat="aire">🌳 Aire libre</button>
+        </div>
+        <button class="btn-surprise" id="btn-surprise">🎲 Sorpréndeme</button>
+      </div>
+
+      <div id="citas-grid" class="citas-grid"></div>
+    </section>
+
+    <!-- JUEGOS -->
+    <section id="juegos" class="panel">
+      <h2 class="section-title">Jueguecitosss 🎮</h2>
+      <p class="section-sub">Gana aquí tus 🪙PochiCoins y canjéalas en la pestaña de premios. Solo puedes jugarlos una vez al día. 😴</p>
+
+      <div class="game-hub" id="game-hub">
+        <button class="game-card" data-game="trivia">
+          <span class="game-risk-badge" title="Puedes perder PochiCoins si fallas.">⚠️</span>
+          <span class="game-emoji">🧠</span>
+          <span class="game-name">I know u best</span>
+          <span class="game-desc">¿Cuánto sabes sobre tu novio?</span>
+        </button>
+        <button class="game-card" data-game="memory">
+          <span class="game-emoji">🃏</span>
+          <span class="game-name">Boni has no memory</span>
+          <span class="game-desc">Empareja nuestras fotos en el menor número de intentos posible.</span>
+        </button>
+        <button class="game-card" data-game="flashback">
+          <span class="game-risk-badge" title="Puedes perder PochiCoins si fallas.">⚠️</span>
+          <span class="game-emoji">📸</span>
+          <span class="game-name">Flashback challenge</span>
+          <span class="game-desc">Adivina en qué mes y año nos hicimos la foto.</span>
+        </button>
+        <button class="game-card" data-game="quotes">
+          <span class="game-risk-badge" title="Puedes perder PochiCoins si fallas.">⚠️</span>
+          <span class="game-emoji">🗯️</span>
+          <span class="game-name">Te lo dije, baby</span>
+          <span class="game-desc">¿Quién de los dos dijo cada frase?</span>
+        </button>
+        <button class="game-card" data-game="food">
+          <span class="game-emoji">🍽️</span>
+          <span class="game-name">What u eatin'?</span>
+          <span class="game-desc">Adivina qué estamos comiendo en la foto antes de que se aclare demasiado.</span>
+        </button>
+      </div>
+
+      <div id="game-trivia" class="game-area" hidden>
+        <button class="btn-back" data-back>↩ Volver atrás</button>
+        <div id="trivia-wrap"></div>
+      </div>
+
+      <div id="game-memory" class="game-area" hidden>
+        <button class="btn-back" data-back>↩ Volver atrás</button>
+        <div id="memory-hearts" class="memory-hearts"></div>
+        <div id="memory-grid" class="memory-grid"></div>
+        <div id="memory-result" class="memory-result" hidden></div>
+      </div>
+
+      <div id="game-flashback" class="game-area" hidden>
+        <button class="btn-back" data-back>↩ Volver atrás</button>
+        <div id="flashback-wrap"></div>
+      </div>
+
+      <div id="game-quotes" class="game-area" hidden>
+        <button class="btn-back" data-back>↩ Volver atrás</button>
+        <div id="quotes-wrap"></div>
+      </div>
+
+      <div id="game-food" class="game-area" hidden>
+        <button class="btn-back" data-back>↩ Volver atrás</button>
+        <div id="food-wrap"></div>
+      </div>
+    </section>
+
+    <!-- CALENDARIO / RECUERDOS -->
+    <section id="calendario" class="panel">
+      <h2 class="section-title">Álbum de recuerdos de Leiriña 💝</h2>
+      <p class="section-sub">Pulsa cada foto para descubrir en qué eres la mejor. 😛</p>
+      <div class="album">
+        <div id="album-page" class="album-page"></div>
+        <div class="album-nav">
+          <button id="album-prev" class="album-nav-btn" aria-label="Página anterior">‹</button>
+          <span id="album-indicator" class="album-indicator">Página 1 de 1</span>
+          <button id="album-next" class="album-nav-btn" aria-label="Página siguiente">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREMIOS -->
+    <section id="premios" class="panel">
+      <h2 class="section-title">Premiosss 🏆</h2>
+      <p class="section-sub">Aquí puedes canjear las 🪙PochiCoins que vayas ganando en los juegos. 😉</p>
+      <div id="premios-grid" class="premios-grid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL DE CONFIRMACIÓN (reutilizable) -->
+<div id="confirm-modal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <p id="modal-message" class="modal-message">¿Seguro?</p>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn-modal btn-modal-cancel">Cancelar</button>
+      <button id="modal-confirm" class="btn-modal btn-modal-confirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
