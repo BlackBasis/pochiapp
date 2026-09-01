@@ -1082,16 +1082,23 @@ function normalizeAnswer(str) {
   return str.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+function saveFoodProgress() {
+  safeSet('pochiapp_session_food', JSON.stringify({ item: foodItem, attempts: foodAttempts, over: foodOver }));
+}
+
 function startFood() {
   const saved = safeGet('pochiapp_session_food');
   if (saved) {
-    foodItem = JSON.parse(saved);
+    const p = JSON.parse(saved);
+    foodItem = p.item;
+    foodAttempts = p.attempts;
+    foodOver = p.over;
   } else {
     foodItem = FOOD_PHOTOS[Math.floor(Math.random() * FOOD_PHOTOS.length)];
-    safeSet('pochiapp_session_food', JSON.stringify(foodItem));
+    foodAttempts = 0;
+    foodOver = false;
+    saveFoodProgress();
   }
-  foodAttempts = 0;
-  foodOver = false;
   renderFood();
 }
 
@@ -1135,6 +1142,7 @@ function answerFood() {
   }
 
   foodAttempts++;
+  saveFoodProgress();
   if (foodAttempts >= FOOD_MAX_ATTEMPTS) {
     finishFood(false);
     return;
