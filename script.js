@@ -1017,7 +1017,7 @@ function applyQuoteAnswerVisual() {
 }
 
 // ============ ¿WHAT U EATIN'? ============ 10
-// "accepted" es una lista de respuestas válidas en minúsculas
+// "accepted" es la lista de respuestas válidas en minúsculas
 const FOOD_PHOTOS = [
   { label: 'Foto 1', src: 'assets/eatin/e1.jpg', accepted: ['patata', 'patatas', 'patata frita', 'patatas fritas'] },
   { label: 'Foto 2', src: 'assets/eatin/e2.jpg', accepted: ['hamburguesa', 'hamburguesas', 'burger', 'burgers'] },
