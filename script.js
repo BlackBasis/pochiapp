@@ -635,7 +635,7 @@ function memoryTileFaceHTML(tile) {
 function renderMemoryGrid() {
   const grid = document.getElementById('memory-grid');
   grid.innerHTML = memoryState.map(tile => `
-      <button class="memory-tile" data-id="${tile.cardId}">
+      <button class="memory-tile ${tile.matched ? 'is-up matched' : ''}" data-id="${tile.cardId}" ${tile.matched ? 'disabled' : ''}>
         <div class="memory-tile-inner">
           <div class="memory-tile-front">💌</div>
           <div class="memory-tile-back">${memoryTileFaceHTML(tile)}</div>
